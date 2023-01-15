@@ -66,6 +66,7 @@ static const Layout layouts[] = {
 	{ "[M]",      monocle }, 	/* All windows on top of each other */
 	{ "|M|",      centeredmaster },
 	{ ">M>",      centeredfloatingmaster },
+	{ "[D]",      deck },
 	{ "><>",      NULL },    	/* no layout function means floating behavior */
 };
 
