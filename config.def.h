@@ -64,6 +64,8 @@ static const Layout layouts[] = {
  	{ "[@]",      spiral },		/* Fibonacci spiral */
  	{ "[\\]",     dwindle },	/* Decreasing in size right and leftward */
 	{ "[M]",      monocle }, 	/* All windows on top of each other */
+	{ "|M|",      centeredmaster },
+	{ ">M>",      centeredfloatingmaster },
 	{ "><>",      NULL },    	/* no layout function means floating behavior */
 };
 
