@@ -5,7 +5,7 @@ dwm is an extremely fast, small, and dynamic window manager for X.
 ## Patches
 
 - [xresources](https://dwm.suckless.org/patches/xresources/): This patch allows to handle settings from Xresources (works with `pywal`)
-- [scratchpad](https://dwm.suckless.org/patches/scratchpads/): enables multiple scratchpads, each with one asigned window. Accessible with MODKEY+shift+enter.
+- [scratchpads](https://dwm.suckless.org/patches/scratchpads/): enables multiple scratchpads, each with one asigned window. Accessible with MODKEY+shift+enter.
 - Layouts - All bound to keys MODKEY+(shift+)t/y/u/i.
 	- [bottomstack](https://dwm.suckless.org/patches/bottomstack/): `bstack` and `bstackhoriz` are two stack layouts for dwm
 	- [fibonacci](https://dwm.suckless.org/patches/fibonacci/): This patch adds two new layouts (spiral and dwindle) that arranges all windows in Fibonacci tiles
