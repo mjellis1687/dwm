@@ -60,13 +60,12 @@ static const Layout layouts[] = {
 	/* symbol     arrange function */
 	{ "[]=",      tile },    	/* first entry is default */
 	{ "TTT",      bstack },	 	/* Main on top, others on bottom */
-	{ "===",      bstackhoriz },	/* Main on top, others stacked horizontally */
  	{ "[@]",      spiral },		/* Fibonacci spiral */
  	{ "[\\]",     dwindle },	/* Decreasing in size right and leftward */
+	{ "[D]",      deck },		/* Main on left, others in monocle mode */
 	{ "[M]",      monocle }, 	/* All windows on top of each other */
-	{ "|M|",      centeredmaster },
-	{ ">M>",      centeredfloatingmaster },
-	{ "[D]",      deck },
+	{ "|M|",      centeredmaster }, /* Main in the middle, others on side */
+	{ ">M>",      centeredfloatingmaster }, /* Main floats */
 	{ "><>",      NULL },    	/* no layout function means floating behavior */
 };
 
@@ -123,13 +122,14 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_Return, zoom,           {0} },
 	{ MODKEY,                       XK_Tab,    view,           {0} },
 	{ MODKEY|ShiftMask,             XK_c,      killclient,     {0} },
-	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
-	{ MODKEY,                       XK_f,      setlayout,      {.v = &layouts[1]} },
-	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[2]} },
-	{ MODKEY,                       XK_u,      setlayout,      {.v = &layouts[3]} },
-	{ MODKEY,                       XK_o,      setlayout,      {.v = &layouts[4]} },
-	{ MODKEY,                       XK_r,      setlayout,      {.v = &layouts[5]} },
-	{ MODKEY|ShiftMask,             XK_r,      setlayout,      {.v = &layouts[6]} },
+	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} }, /* tile */
+	{ MODKEY|ShiftMask,             XK_t,      setlayout,      {.v = &layouts[1]} }, /* bstack */
+	{ MODKEY,                       XK_y,      setlayout,      {.v = &layouts[2]} }, /* spiral */
+	{ MODKEY|ShiftMask,             XK_y,      setlayout,      {.v = &layouts[3]} }, /* dwindle */
+	{ MODKEY,                       XK_u,      setlayout,      {.v = &layouts[4]} }, /* deck */
+	{ MODKEY|ShiftMask,             XK_u,      setlayout,      {.v = &layouts[5]} }, /* monocle */
+	{ MODKEY,                       XK_i,      setlayout,      {.v = &layouts[6]} }, /* centered */
+	{ MODKEY|ShiftMask,             XK_i,      setlayout,      {.v = &layouts[7]} }, /* centeredfloat */
 	{ MODKEY,                       XK_space,  setlayout,      {0} },
 	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
 	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
