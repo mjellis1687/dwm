@@ -23,3 +23,8 @@ Patches I did not install:
 
 - [shift-tools](https://dwm.suckless.org/patches/shift-tools/): A group of functions that shift
 	- `shiftview`: Cycle through tags (MODKEY+g/;).
+
+## TODO
+
+- Update layout keymaps in man page
+- Left off at deck
