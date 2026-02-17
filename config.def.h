@@ -8,31 +8,32 @@
 #define SESSION_FILE "/tmp/dwm-session"
 
 /* appearance */
-static const unsigned int borderpx  = 3;        /* border pixel of windows */
-static const unsigned int snap      = 32;       /* snap pixel */
-static const int showbar            = 1;        /* 0 means no bar */
-static const int showtitle          = 1;        /* 0 means no title */
-static const int showtags           = 1;        /* 0 means no tags */
-static const int showlayout         = 0;        /* 0 means no layout indicator */
-static const int showstatus         = 1;        /* 0 means no status bar */
-static const int showfloating       = 1;        /* 0 means no floating indicator */
-static const int topbar             = 1;        /* 0 means bottom bar */
+static unsigned int borderpx  = 3;        /* border pixel of windows */
+static unsigned int snap      = 32;       /* snap pixel */
+static int showbar            = 1;        /* 0 means no bar */
+static int showtitle          = 1;        /* 0 means no title */
+static int showtags           = 1;        /* 0 means no tags */
+static int showlayout         = 0;        /* 0 means no layout indicator */
+static int showstatus         = 1;        /* 0 means no status bar */
+static int showfloating       = 1;        /* 0 means no floating indicator */
+static int topbar             = 1;        /* 0 means bottom bar */
 static const char *fonts[]          = { "monospace:size=13", "NotoColorEmoji:pixelsize=10:antialias=true:autohint=true" };
 static const char dmenufont[]       = "monospace:size=13";
-static const char col_gray1[]       = "#222222";
-static const char col_gray2[]       = "#444444";
-static const char col_gray3[]       = "#bbbbbb";
-static const char col_gray4[]       = "#eeeeee";
-static const char col_cyan[]        = "#005577";
-static const char *colors[][3]      = {
-	/*               fg         bg         border   */
-	[SchemeNorm] = { col_gray3, col_gray1, col_gray2 },
-	[SchemeSel]  = { col_gray4, col_cyan,  col_cyan  },
-	[SchemeStatus]  = { col_gray3, col_gray1,  "#000000"  }, // Statusbar right {text,background,not used but cannot be empty}
-	[SchemeTagsSel]  = { col_gray4, col_cyan,  "#000000"  }, // Tagbar left selected {text,background,not used but cannot be empty}
-	[SchemeTagsNorm]  = { col_gray3, col_gray1,  "#000000"  }, // Tagbar left unselected {text,background,not used but cannot be empty}
-	[SchemeInfoSel]  = { col_gray4, col_cyan,  "#000000"  }, // infobar middle  selected {text,background,not used but cannot be empty}
-	[SchemeInfoNorm]  = { col_gray3, col_gray1,  "#000000"  }, // infobar middle  unselected {text,background,not used but cannot be empty}
+static char normbgcolor[]     = "#222222";
+static char normbordercolor[] = "#444444";
+static char normfgcolor[]     = "#bbbbbb";
+static char selfgcolor[]      = "#eeeeee";
+static char selbordercolor[]  = "#005577";
+static char selbgcolor[]	  = "#005577";
+static char *colors[][3]      = {
+	/*					 fg				bg				border   */
+	[SchemeNorm]	 = { normfgcolor,	normbgcolor,	normbordercolor },
+	[SchemeSel]		 = { selfgcolor,	selbgcolor,		selbordercolor  },
+	[SchemeStatus]   = { normfgcolor, 	normbgcolor,	"#000000" }, // Statusbar right {text,background,not used but cannot be empty}
+	[SchemeTagsSel]  = { selfgcolor, 	selbgcolor,		"#000000" }, // Tagbar left selected {text,background,not used but cannot be empty}
+	[SchemeTagsNorm] = { normfgcolor, 	normbgcolor, 	"#000000" }, // Tagbar left unselected {text,background,not used but cannot be empty}
+	[SchemeInfoSel]  = { selfgcolor, 	selbgcolor,		"#000000" }, // infobar middle  selected {text,background,not used but cannot be empty}
+	[SchemeInfoNorm] = { normfgcolor, 	normbgcolor,	"#000000" }, // infobar middle  unselected {text,background,not used but cannot be empty}
 };
 
 /* tagging */
@@ -51,9 +52,9 @@ static const Rule rules[] = {
 };
 
 /* layout(s) */
-static const float mfact     = 0.55; /* factor of master area size [0.05..0.95] */
-static const int nmaster     = 1;    /* number of clients in master area */
-static const int resizehints = 1;    /* 1 means respect size hints in tiled resizals */
+static float mfact     = 0.55; /* factor of master area size [0.05..0.95] */
+static int nmaster     = 1;    /* number of clients in master area */
+static int resizehints = 1;    /* 1 means respect size hints in tiled resizals */
 static const int lockfullscreen = 1; /* 1 will force focus on the fullscreen window */
 static const int refreshrate = 120;  /* refresh rate (per second) for client move/resize */
 
@@ -77,8 +78,27 @@ static const Layout layouts[] = {
 
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
-static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
+static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbordercolor, "-sf", selfgcolor, NULL };
 static const char *termcmd[]  = { "st", NULL };
+
+/*
+ * Xresources preferences to load at startup
+ */
+ResourcePref resources[] = {
+		{ "normbgcolor",        STRING,  &normbgcolor },
+		{ "normbordercolor",    STRING,  &normbordercolor },
+		{ "normfgcolor",        STRING,  &normfgcolor },
+		{ "selbgcolor",         STRING,  &selbgcolor },
+		{ "selbordercolor",     STRING,  &selbordercolor },
+		{ "selfgcolor",         STRING,  &selfgcolor },
+		{ "borderpx",          	INTEGER, &borderpx },
+		{ "snap",          		INTEGER, &snap },
+		{ "showbar",          	INTEGER, &showbar },
+		{ "topbar",          	INTEGER, &topbar },
+		{ "nmaster",          	INTEGER, &nmaster },
+		{ "resizehints",       	INTEGER, &resizehints },
+		{ "mfact",      	 	FLOAT,   &mfact },
+};
 
 static const Key keys[] = {
 	/* modifier                     key				function			argument */
@@ -197,7 +217,7 @@ static const Key keys[] = {
 	{ MODKEY,						XK_F2,			spawn,				{.v = (const char*[]){ "tutorialvids", NULL } } },
 	{ MODKEY,						XK_F3,			spawn,				{.v = (const char*[]){ "displayselect", NULL } } },
 	{ MODKEY,						XK_F4,			spawn,				SHCMD(TERMINAL " -e pulsemixer; kill -44 $(pidof dwmblocks)") },
-	/* { MODKEY,					XK_F5,			xrdb,				{.v = NULL } }, */
+	{ MODKEY,						XK_F5,			xrdb,				{.v = NULL } },
 	/* { MODKEY,					XK_F6,			spawn,				{.v = (const char*[]){ "torwrap", NULL } } }, */
 	/* { MODKEY,					XK_F7,			spawn,				{.v = (const char*[]){ "td-toggle", NULL } } }, */
 	/* { MODKEY,					XK_F8,			spawn,				{.v = (const char*[]){ "mailsync", NULL } } }, */
