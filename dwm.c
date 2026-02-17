@@ -1290,50 +1290,77 @@ propertynotify(XEvent *e)
 void
 saveSession(void)
 {
-	FILE *fw = fopen(SESSION_FILE, "w");
-	for (Client *c = selmon->clients; c != NULL; c = c->next) { // get all the clients with their tags and write them to the file
-		fprintf(fw, "%lu %u\n", c->win, c->tags);
-	}
-	fclose(fw);
+    FILE *fw = fopen(SESSION_FILE, "w");
+    Monitor *m;
+    Client *c;
+    int m_idx = 0;
+
+    if (!fw) return;
+
+    // Loop through every monitor
+    for (m = mons; m; m = m->next, m_idx++) {
+        // Loop through every client on that specific monitor
+        for (c = m->clients; c; c = c->next) {
+            // Save: Window ID, Tags, and Monitor Index
+            fprintf(fw, "%lu %u %d\n", c->win, c->tags, m_idx);
+        }
+    }
+    fclose(fw);
 }
 
 void
 restoreSession(void)
 {
-	// restore session
-	FILE *fr = fopen(SESSION_FILE, "r");
-	if (!fr)
-		return;
+    FILE *fr = fopen(SESSION_FILE, "r");
+    if (!fr) return;
 
-	char *str = malloc(23 * sizeof(char)); // allocate enough space for excepted input from text file
-	while (fscanf(fr, "%[^\n] ", str) != EOF) { // read file till the end
-		long unsigned int winId;
-		unsigned int tagsForWin;
-		int check = sscanf(str, "%lu %u", &winId, &tagsForWin); // get data
-		if (check != 2) // break loop if data wasn't read correctly
-			break;
+    unsigned long win_id;
+    unsigned int tags;
+    int m_idx;
 
-		for (Client *c = selmon->clients; c ; c = c->next) { // add tags to every window by winId
-			if (c->win == winId) {
-				c->tags = tagsForWin;
-				break;
-			}
-		}
+    // Read each line: [Window ID] [Tags] [Monitor Index]
+    while (fscanf(fr, "%lu %u %d", &win_id, &tags, &m_idx) == 3) {
+        Client *c;
+        Monitor *m;
+        int i;
+
+        // 1. Find the actual Monitor object for this index
+        for (m = mons, i = 0; m && i < m_idx; m = m->next, i++);
+        if (!m) m = mons; // Fallback to first monitor if index is invalid
+
+        // 2. Find the Client (window) that matches this ID
+        // We search through all monitors to find where the window currently is
+        Client *found_c = NULL;
+        for (Monitor *tm = mons; tm; tm = tm->next) {
+            for (c = tm->clients; c; c = c->next) {
+                if (c->win == win_id) {
+                    found_c = c;
+                    break;
+                }
+            }
+            if (found_c) break;
+        }
+
+        // 3. Apply the saved state
+        if (found_c) {
+			found_c->tags = tags; // Ensure tags are within valid range
+            if (found_c->mon != m) {
+                sendmon(found_c, m);
+            }
+            // Add this to ensure the window's state is updated in the stack
+            setclientstate(found_c, NormalState);
+        }
     }
 
-	for (Client *c = selmon->clients; c ; c = c->next) { // refocus on windows
-		focus(c);
-		restack(c->mon);
-	}
+	// After all windows are processed, refresh all monitors
+    for (Monitor *m = mons; m; m = m->next) {
+        arrange(m);
+        focus(NULL);
+    }
 
-	for (Monitor *m = selmon; m; m = m->next) // rearrange all monitors
-		arrange(m);
-
-	free(str);
-	fclose(fr);
-
-	// delete a file
-	remove(SESSION_FILE);
+    fclose(fr);
+    // Optional: Delete the file so it doesn't persist across fresh logins
+    remove(SESSION_FILE);
 }
 
 void
