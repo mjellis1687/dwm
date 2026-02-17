@@ -36,6 +36,19 @@ static char *colors[][3]      = {
 	[SchemeInfoNorm] = { normfgcolor, 	normbgcolor,	"#000000" }, // infobar middle  unselected {text,background,not used but cannot be empty}
 };
 
+typedef struct {
+	const char *name;
+	const void *cmd;
+} Sp;
+const char *spcmd1[] = {"st", "-n", "spterm", "-g", "120x34", NULL };
+const char *spcmd2[] = {TERMINAL, "-n", "spcalc", "-f", "monospace:size=16", "-g", "50x20", "-e", "bc", "-lq", NULL };
+/* const char *spcmd2[] = {"st", "-n", "spfm", "-g", "144x41", "-e", "ranger", NULL }; */
+static Sp scratchpads[] = {
+	/* name          cmd  */
+	{"spterm",      spcmd1},
+	{"spcalc",		spcmd2},
+};
+
 /* tagging */
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
@@ -49,6 +62,8 @@ static const Rule rules[] = {
 	{ TERMCLASS,  NULL,       NULL,       0,            0,           -1 },
 	{ "Nautilus", NULL,       NULL,       1 << 8,		0,			  2 },
 	{ "Slack",	  NULL,		  NULL,		  1 << 1,		0,			  1 },
+	{ TERMCLASS,  "spterm",   NULL,       SPTAG(0),     1,           -1 },
+	{ TERMCLASS,  "spcalc",   NULL,       SPTAG(1),     1,           -1 },
 };
 
 /* layout(s) */
@@ -185,15 +200,16 @@ static const Key keys[] = {
 	{ MODKEY,						XK_backslash,	view,				{0} },
 	/* { MODKEY,					XK_semicolon,	NULL,				NULL }, */
 	/* { MODKEY|ShiftMask,			XK_semicolon,	NULL,				NULL }, */
-	/* { MODKEY,					XK_apostrophe,	togglescratch,		{.ui = 1} }, */
+	{ MODKEY,						XK_apostrophe,	togglescratch,		{.ui = 1} },
 	/* { MODKEY|ShiftMask,			XK_apostrophe,	NULL,				NULL }, */
 	{ MODKEY,						XK_Return, 		spawn,          	{.v = termcmd } },
-	{ MODKEY|ShiftMask,             XK_Return, 		zoom,           	{0} },
+	{ MODKEY|ShiftMask,             XK_Return, 		togglescratch,     	{.ui = 0} },
 	{ MODKEY|ShiftMask,             XK_comma,  		tagmon,         	{.i = -1 } },
 	{ MODKEY,                       XK_comma,  		focusmon,       	{.i = -1 } },
 	{ MODKEY,                       XK_period, 		focusmon,       	{.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_period, 		tagmon,         	{.i = +1 } },
-	{ MODKEY,                       XK_space,  		setlayout,      	{0} },
+	/* { MODKEY,                    XK_space,  		setlayout,      	{0} }, */
+	{ MODKEY,                       XK_space,  		zoom,				{0} },
 	{ MODKEY|ShiftMask,             XK_space,  		togglefloating, 	{0} },
 	/* Arrow keys */
 	{ MODKEY,						XK_Left,		focusmon,			{.i = -1 } },
@@ -237,7 +253,7 @@ static const Button buttons[] = {
 	{ ClkStatusText,        0,              Button2,        spawn,          {.v = termcmd } },
 	{ ClkClientWin,         MODKEY,         Button1,        movemouse,      {0} },
 	{ ClkClientWin,         MODKEY,         Button2,        togglefloating, {0} },
-	{ ClkClientWin,         MODKEY,         Button3,        resizemouse,    {0} },
+	{ ClkClientWin,         MODKEY,         Button1,        resizemouse,    {0} },
 	{ ClkTagBar,            0,              Button1,        view,           {0} },
 	{ ClkTagBar,            0,              Button3,        toggleview,     {0} },
 	{ ClkTagBar,            MODKEY,         Button1,        tag,            {0} },
