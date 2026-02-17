@@ -191,8 +191,8 @@ static const Key keys[] = {
 	{ MODKEY|ControlMask|ShiftMask, XK_q,			quit,				{1} },
 	{ MODKEY,						XK_r,			spawn,				{.v = (const char*[]){ "nautilus", NULL } } },
 	{ MODKEY|ShiftMask,				XK_r,			spawn,				{.v = (const char*[]){ TERMINAL, "-e", "htop", NULL } } },
-	{ MODKEY,                       XK_s,      		togglebarstatus,	{0} },
-	{ MODKEY|ShiftMask,				XK_s,      		togglebarlt,    	{0} },
+	{ MODKEY,                       XK_s,			togglesticky,		{0} },
+	/* { MODKEY|ShiftMask,			XK_s,			NULL,				NULL }, */
 	{ MODKEY,                       XK_t,      		setlayout,      	{.v = &layouts[0]} },
 	/* { MODKEY|ShiftMask,			XK_t,			NULL,				NULL }, */
 	{ MODKEY,						XK_u,			togglermaster,		{0} },
@@ -202,8 +202,8 @@ static const Key keys[] = {
 	/* { MODKEY|ShiftMask,			XK_v,			NULL,				NULL }, */
 	{ MODKEY,						XK_w,			spawn,				{.v = (const char*[]){ BROWSER, NULL } } },
 	/* { MODKEY|ShiftMask,			XK_w,			NULL,				NULL }, */
-	/* { MODKEY,					XK_x,			NULL,				NULL }, */
-	/* { MODKEY|ShiftMask,			XK_x,			NULL,				NULL }, */
+	{ MODKEY,                       XK_x,      		togglebarstatus,	{0} },
+	{ MODKEY|ShiftMask,				XK_x,      		togglebarlt,    	{0} },
 	/* { MODKEY,					XK_y,			NULL,				NULL }, */
 	/* { MODKEY|ShiftMask,			XK_y,			NULL,				NULL }, */
 	/* { MODKEY,					XK_z,			NULL,				NULL }, */
