@@ -5,6 +5,8 @@
 #define TERMCLASS "St"
 #define BROWSER "brave"
 
+#define SESSION_FILE "/tmp/dwm-session"
+
 /* appearance */
 static const unsigned int borderpx  = 3;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
@@ -142,6 +144,7 @@ static const Key keys[] = {
 	/* { MODKEY|ShiftMask,          XK_q,      		quit,           	{0} }, */
 	{ MODKEY|ShiftMask,				XK_q,			spawn,				{.v = (const char*[]){ "sysact", NULL } } },
 	{ MODKEY|ControlMask,			XK_q,			quit,				{0} },
+	{ MODKEY|ControlMask|ShiftMask, XK_q,			quit,				{1} },
 	{ MODKEY,						XK_r,			spawn,				{.v = (const char*[]){ "nautilus", NULL } } },
 	{ MODKEY|ControlMask,			XK_r,			spawn,				{.v = reloadcmd } },
 	{ MODKEY|ShiftMask,				XK_r,			spawn,				{.v = (const char*[]){ TERMINAL, "-e", "htop", NULL } } },
