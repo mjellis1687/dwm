@@ -10,6 +10,7 @@
 /* appearance */
 static unsigned int borderpx  = 3;        /* border pixel of windows */
 static unsigned int snap      = 32;       /* snap pixel */
+static const int rmaster	  = 0;		  /* 1 means master-area is initially on the right */
 static int showbar            = 1;        /* 0 means no bar */
 static int showtitle          = 1;        /* 0 means no title */
 static int showtags           = 1;        /* 0 means no tags */
@@ -179,7 +180,7 @@ static const Key keys[] = {
 	{ MODKEY|ShiftMask,				XK_s,      		togglebarlt,    	{0} },
 	{ MODKEY,                       XK_t,      		setlayout,      	{.v = &layouts[0]} },
 	/* { MODKEY|ShiftMask,			XK_t,			NULL,				NULL }, */
-	/* { MODKEY,					XK_u,			NULL,				NULL }, */
+	{ MODKEY,						XK_u,			togglermaster,		{0} },
 	/* { MODKEY|ShiftMask,			XK_u,			NULL,				NULL }, */
 	/* { MODKEY,					XK_v,			NULL,				NULL }, */
 	/* { MODKEY|ShiftMask,			XK_v,			NULL,				NULL }, */
