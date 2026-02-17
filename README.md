@@ -30,3 +30,7 @@ dwm is an extremely fast, small, and dynamic window manager for X.
 ### Additional Layouts
 
 - [rmaster](https://dwm.suckless.org/patches/rmaster/) via [patch](https://dwm.suckless.org/patches/rmaster/dwm-rmaster-6.2.diff): Enables swapping the master- and stack area such that the master-client appears on the right and the stack-clients appear on the left.
+
+## TODO
+
+- Fix reloading dwm (clients get set to the correct monitor, but not the correct tag)
