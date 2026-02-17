@@ -88,6 +88,15 @@ static const Layout layouts[] = {
 	{ MODKEY|ControlMask,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
 	{ MODKEY|ShiftMask,             KEY,      tag,            {.ui = 1 << TAG} }, \
 	{ MODKEY|ControlMask|ShiftMask, KEY,      toggletag,      {.ui = 1 << TAG} },
+#define STACKKEYS(MOD,ACTION) \
+	{ MOD, XK_j,     ACTION##stack, {.i = INC(+1) } }, \
+	{ MOD, XK_k,     ACTION##stack, {.i = INC(-1) } }, \
+	{ MOD, XK_v,	 ACTION##stack,  {.i = 0 } }, \
+	/* { MOD, XK_grave, ACTION##stack, {.i = PREVSEL } }, \ */
+	/* { MOD, XK_q,     ACTION##stack, {.i = 0 } }, \ */
+	/* { MOD, XK_a,     ACTION##stack, {.i = 1 } }, \ */
+	/* { MOD, XK_z,     ACTION##stack, {.i = 2 } }, \ */
+	/* { MOD, XK_x,     ACTION##stack, {.i = -1 } }, */
 
 /* helper for spawning shell commands in the pre dwm-5.0 fashion */
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
@@ -118,6 +127,8 @@ ResourcePref resources[] = {
 
 static const Key keys[] = {
 	/* modifier                     key				function			argument */
+	STACKKEYS(MODKEY,				focus)
+	STACKKEYS(MODKEY|ShiftMask,     push)
 	{ MODKEY,						XK_grave,		spawn,				{.v = (const char*[]){ "dmenuunicode", NULL } } },
 	TAGKEYS(                        XK_1,      		                	0)
 	TAGKEYS(                        XK_2,      		                	1)
@@ -154,9 +165,11 @@ static const Key keys[] = {
 	{ MODKEY|ShiftMask,				XK_h,			tagmon,				{.i = -1 } },
 	/* { MODKEY,					XK_i,			NULL,				NULL }, */
 	/* { MODKEY|ShiftMask,			XK_i,			NULL,				NULL }, */
-	{ MODKEY,						XK_j,      		focusstack,     	{.i = +1 } },
+	/* Mapped using stack keys */
+	/* { MODKEY,					XK_j,      		focusstack,     	{.i = +1 } }, */
 	/* { MODKEY|ShiftMask,			XK_j,			NULL,				NULL }, */
-	{ MODKEY,                       XK_k,      		focusstack,     	{.i = -1 } },
+	/* Mapped using stack keys */
+	/* { MODKEY,                    XK_k,      		focusstack,     	{.i = -1 } }, */
 	/* { MODKEY|ShiftMask,			XK_k,			NULL,				NULL }, */
 	{ MODKEY,                       XK_l,      		setmfact,       	{.f = +0.05} },
 	{ MODKEY|ShiftMask,				XK_l,			tagmon,				{.i = +1 } },
@@ -182,6 +195,7 @@ static const Key keys[] = {
 	/* { MODKEY|ShiftMask,			XK_t,			NULL,				NULL }, */
 	{ MODKEY,						XK_u,			togglermaster,		{0} },
 	/* { MODKEY|ShiftMask,			XK_u,			NULL,				NULL }, */
+	/* Mapped using stack keys */
 	/* { MODKEY,					XK_v,			NULL,				NULL }, */
 	/* { MODKEY|ShiftMask,			XK_v,			NULL,				NULL }, */
 	{ MODKEY,						XK_w,			spawn,				{.v = (const char*[]){ BROWSER, NULL } } },
