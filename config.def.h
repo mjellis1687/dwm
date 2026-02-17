@@ -80,12 +80,6 @@ static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() 
 static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
 static const char *termcmd[]  = { "st", NULL };
 
-/* 1. Command to just kill dwm (triggers the loop to restart it) */
-static const char *reloadcmd[] = { "pkill", "dwm", NULL };
-
-/* 2. Command to create the logout file, then kill dwm */
-static const char *logoutcmd[] = { "sh", "-c", "touch /tmp/dwm_logout && pkill dwm", NULL };
-
 static const Key keys[] = {
 	/* modifier                     key				function			argument */
 	{ MODKEY,						XK_grave,		spawn,				{.v = (const char*[]){ "dmenuunicode", NULL } } },
@@ -140,13 +134,11 @@ static const Key keys[] = {
 	/* { MODKEY,					XK_p,			NULL,				NULL }, */
 	/* { MODKEY|ShiftMask,			XK_p,			NULL,				NULL }, */
 	{ MODKEY,						XK_q,			killclient,			{0} },
-	{ MODKEY|ShiftMask,				XK_q,      		spawn,           	{.v = logoutcmd } },
 	/* { MODKEY|ShiftMask,          XK_q,      		quit,           	{0} }, */
-	{ MODKEY|ShiftMask,				XK_q,			spawn,				{.v = (const char*[]){ "sysact", NULL } } },
+	/* { MODKEY|ShiftMask,			XK_q,			spawn,				{.v = (const char*[]){ "sysact", NULL } } }, */
 	{ MODKEY|ControlMask,			XK_q,			quit,				{0} },
 	{ MODKEY|ControlMask|ShiftMask, XK_q,			quit,				{1} },
 	{ MODKEY,						XK_r,			spawn,				{.v = (const char*[]){ "nautilus", NULL } } },
-	{ MODKEY|ControlMask,			XK_r,			spawn,				{.v = reloadcmd } },
 	{ MODKEY|ShiftMask,				XK_r,			spawn,				{.v = (const char*[]){ TERMINAL, "-e", "htop", NULL } } },
 	{ MODKEY,                       XK_s,      		togglebarstatus,	{0} },
 	{ MODKEY|ShiftMask,				XK_s,      		togglebarlt,    	{0} },
@@ -164,19 +156,55 @@ static const Key keys[] = {
 	/* { MODKEY|ShiftMask,			XK_y,			NULL,				NULL }, */
 	/* { MODKEY,					XK_z,			NULL,				NULL }, */
 	/* { MODKEY|ShiftMask,			XK_z,			NULL,				NULL }, */
+	/* Other keys on main keyboard */
 	{ MODKEY,                       XK_Tab,    		view,           	{0} },
 	/* { MODKEY,					XK_bracketleft,	spawn,				{.v = (const char*[]){ "mpc", "seek", "-10", NULL } } }, */
 	/* { MODKEY|ShiftMask,			XK_bracketleft,	spawn,				{.v = (const char*[]){ "mpc", "seek", "-60", NULL } } }, */
 	/* { MODKEY,					XK_bracketright,spawn,				{.v = (const char*[]){ "mpc", "seek", "+10", NULL } } }, */
 	/* { MODKEY|ShiftMask,			XK_bracketright,spawn,				{.v = (const char*[]){ "mpc", "seek", "+60", NULL } } }, */
+	{ MODKEY,						XK_backslash,	view,				{0} },
+	/* { MODKEY,					XK_semicolon,	NULL,				NULL }, */
+	/* { MODKEY|ShiftMask,			XK_semicolon,	NULL,				NULL }, */
+	/* { MODKEY,					XK_apostrophe,	togglescratch,		{.ui = 1} }, */
+	/* { MODKEY|ShiftMask,			XK_apostrophe,	NULL,				NULL }, */
 	{ MODKEY,						XK_Return, 		spawn,          	{.v = termcmd } },
 	{ MODKEY|ShiftMask,             XK_Return, 		zoom,           	{0} },
-	{ MODKEY,                       XK_space,  		setlayout,      	{0} },
-	{ MODKEY|ShiftMask,             XK_space,  		togglefloating, 	{0} },
+	{ MODKEY|ShiftMask,             XK_comma,  		tagmon,         	{.i = -1 } },
 	{ MODKEY,                       XK_comma,  		focusmon,       	{.i = -1 } },
 	{ MODKEY,                       XK_period, 		focusmon,       	{.i = +1 } },
-	{ MODKEY|ShiftMask,             XK_comma,  		tagmon,         	{.i = -1 } },
 	{ MODKEY|ShiftMask,             XK_period, 		tagmon,         	{.i = +1 } },
+	{ MODKEY,                       XK_space,  		setlayout,      	{0} },
+	{ MODKEY|ShiftMask,             XK_space,  		togglefloating, 	{0} },
+	/* Arrow keys */
+	{ MODKEY,						XK_Left,		focusmon,			{.i = -1 } },
+	{ MODKEY|ShiftMask,				XK_Left,		tagmon,				{.i = -1 } },
+	{ MODKEY,						XK_Right,		focusmon,			{.i = +1 } },
+	{ MODKEY|ShiftMask,				XK_Right,		tagmon,				{.i = +1 } },
+	/* { MODKEY,					XK_Insert,		spawn,				SHCMD("xdotool type $(grep -v '^#' ~/.local/share/larbs/snippets | dmenu -i -l 50 | cut -d' ' -f1)") }, */
+	/* { MODKEY,					XK_Home,		NULL,				NULL }, */
+	/* { MODKEY,					XK_Page_Up,		shiftview,			{ .i = -1 } }, */
+	/* { MODKEY|ShiftMask,			XK_Page_Up,		shifttag,			{ .i = -1 } }, */
+	{ MODKEY,						XK_Delete,		spawn,				{.v = (const char*[]){ "dmenurecord", "kill", NULL } } },
+	/* { MODKEY,					XK_End,			NULL,				NULL }, */
+	/* { MODKEY,					XK_Page_Down,	shiftview,			{ .i = +1 } }, */
+	/* { MODKEY|ShiftMask,			XK_Page_Down,	shifttag,			{ .i = +1 } }, */
+	{ 0,							XK_Print,		spawn,				SHCMD("maim pic-full-$(date '+%y%m%d-%H%M-%S').png") },
+	{ ShiftMask,					XK_Print,		spawn,				{.v = (const char*[]){ "maimpick", NULL } } },
+	{ MODKEY,						XK_Print,		spawn,				{.v = (const char*[]){ "dmenurecord", NULL } } },
+	{ MODKEY|ShiftMask,				XK_Print,		spawn,				{.v = (const char*[]){ "dmenurecord", "kill", NULL } } },
+	/* { MODKEY,					XK_Scroll_Lock,	spawn,				SHCMD("killall screenkey || screenkey &") }, */
+	{ MODKEY,						XK_F1,			spawn,				SHCMD("groff -mom /usr/local/share/dwm/larbs.mom -Tpdf | zathura -") },
+	{ MODKEY,						XK_F2,			spawn,				{.v = (const char*[]){ "tutorialvids", NULL } } },
+	{ MODKEY,						XK_F3,			spawn,				{.v = (const char*[]){ "displayselect", NULL } } },
+	{ MODKEY,						XK_F4,			spawn,				SHCMD(TERMINAL " -e pulsemixer; kill -44 $(pidof dwmblocks)") },
+	/* { MODKEY,					XK_F5,			xrdb,				{.v = NULL } }, */
+	/* { MODKEY,					XK_F6,			spawn,				{.v = (const char*[]){ "torwrap", NULL } } }, */
+	/* { MODKEY,					XK_F7,			spawn,				{.v = (const char*[]){ "td-toggle", NULL } } }, */
+	/* { MODKEY,					XK_F8,			spawn,				{.v = (const char*[]){ "mailsync", NULL } } }, */
+	{ MODKEY,						XK_F9,			spawn,				{.v = (const char*[]){ "mounter", NULL } } },
+	{ MODKEY,						XK_F10,			spawn,				{.v = (const char*[]){ "unmounter", NULL } } },
+	/* { MODKEY,					XK_F11,			spawn,				SHCMD("mpv --untimed --no-cache --no-osc --no-input-default-bindings --profile=low-latency --input-conf=/dev/null --title=webcam $(ls /dev/video[0,2,4,6,8] | tail -n 1)") }, */
+	/* { MODKEY,					XK_F12,			spawn,				SHCMD("remaps") }, */
 };
 
 /* button definitions */
