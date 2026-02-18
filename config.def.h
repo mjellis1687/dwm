@@ -10,7 +10,7 @@
 /* appearance */
 static unsigned int borderpx  = 3;        /* border pixel of windows */
 static unsigned int snap      = 32;       /* snap pixel */
-static const int swallowfloating = 0;     /* 1 means swallow floating windows by default */
+static int swallowfloating	  = 0;     /* 1 means swallow floating windows by default */
 static const int rmaster	  = 0;		  /* 1 means master-area is initially on the right */
 static int showbar            = 1;        /* 0 means no bar */
 static int showtitle          = 1;        /* 0 means no title */
@@ -21,6 +21,8 @@ static int showfloating       = 1;        /* 0 means no floating indicator */
 static int topbar             = 1;        /* 0 means bottom bar */
 static const char *fonts[]          = { "monospace:size=13", "NotoColorEmoji:pixelsize=10:antialias=true:autohint=true" };
 static const char dmenufont[]       = "monospace:size=13";
+
+/* default colors used if xrdb is not loaded */
 static char normbgcolor[]     = "#222222";
 static char normbordercolor[] = "#444444";
 static char normfgcolor[]     = "#bbbbbb";
@@ -31,11 +33,11 @@ static char *colors[][3]      = {
 	/*					 fg				bg				border   */
 	[SchemeNorm]	 = { normfgcolor,	normbgcolor,	normbordercolor },
 	[SchemeSel]		 = { selfgcolor,	selbgcolor,		selbordercolor  },
-	[SchemeStatus]   = { normfgcolor, 	normbgcolor,	"#000000" }, // Statusbar right {text,background,not used but cannot be empty}
-	[SchemeTagsSel]  = { selfgcolor, 	selbgcolor,		"#000000" }, // Tagbar left selected {text,background,not used but cannot be empty}
-	[SchemeTagsNorm] = { normfgcolor, 	normbgcolor, 	"#000000" }, // Tagbar left unselected {text,background,not used but cannot be empty}
-	[SchemeInfoSel]  = { selfgcolor, 	selbgcolor,		"#000000" }, // infobar middle  selected {text,background,not used but cannot be empty}
-	[SchemeInfoNorm] = { normfgcolor, 	normbgcolor,	"#000000" }, // infobar middle  unselected {text,background,not used but cannot be empty}
+	[SchemeStatus]   = { normfgcolor, 	normbgcolor,	normbgcolor }, // Statusbar right {text,background,not used but cannot be empty}
+	[SchemeTagsSel]  = { selfgcolor, 	selbgcolor,		normbgcolor }, // Tagbar left selected {text,background,not used but cannot be empty}
+	[SchemeTagsNorm] = { normfgcolor, 	normbgcolor, 	normbgcolor }, // Tagbar left unselected {text,background,not used but cannot be empty}
+	[SchemeInfoSel]  = { selfgcolor, 	selbgcolor,		normbgcolor }, // infobar middle  selected {text,background,not used but cannot be empty}
+	[SchemeInfoNorm] = { normfgcolor, 	normbgcolor,	normbgcolor }, // infobar middle  unselected {text,background,not used but cannot be empty}
 };
 
 typedef struct {
@@ -80,7 +82,9 @@ static const Layout layouts[] = {
 	/* symbol     arrange function */
 	{ "[]=",      tile },    /* first entry is default */
 	{ "><>",      NULL },    /* no layout function means floating behavior */
-	{ "[M]",      monocle },
+	{ "[M]",      monocle },			/* All windows on top of each other */
+	{ "|M|",      centeredmaster },		/* Master in middle, others on sides */
+	{ ">M>",      centeredfloatingmaster }, /* Same but master floats */
 };
 
 /* key definitions */
@@ -114,19 +118,27 @@ static const char *termcmd[]  = { "st", NULL };
  * Xresources preferences to load at startup
  */
 ResourcePref resources[] = {
-		{ "normbgcolor",        STRING,  &normbgcolor },
-		{ "normbordercolor",    STRING,  &normbordercolor },
-		{ "normfgcolor",        STRING,  &normfgcolor },
-		{ "selbgcolor",         STRING,  &selbgcolor },
-		{ "selbordercolor",     STRING,  &selbordercolor },
-		{ "selfgcolor",         STRING,  &selfgcolor },
-		{ "borderpx",          	INTEGER, &borderpx },
-		{ "snap",          		INTEGER, &snap },
-		{ "showbar",          	INTEGER, &showbar },
-		{ "topbar",          	INTEGER, &topbar },
-		{ "nmaster",          	INTEGER, &nmaster },
-		{ "resizehints",       	INTEGER, &resizehints },
-		{ "mfact",      	 	FLOAT,   &mfact },
+
+		{ "color0",				STRING,		&normbordercolor },
+		{ "color8",				STRING,		&selbordercolor },
+		{ "color0",				STRING,		&normbgcolor },
+		{ "color4",				STRING,		&normfgcolor },
+		{ "color0",				STRING,		&selfgcolor },
+		{ "color4",				STRING,		&selbgcolor },
+		{ "normbgcolor",        STRING,		&normbgcolor },
+		{ "normbordercolor",    STRING,  	&normbordercolor },
+		{ "normfgcolor",        STRING,  	&normfgcolor },
+		{ "selbgcolor",         STRING,  	&selbgcolor },
+		{ "selbordercolor",     STRING,  	&selbordercolor },
+		{ "selfgcolor",         STRING,  	&selfgcolor },
+		{ "borderpx",          	INTEGER, 	&borderpx },
+		{ "snap",          		INTEGER, 	&snap },
+		{ "showbar",          	INTEGER, 	&showbar },
+		{ "topbar",          	INTEGER, 	&topbar },
+		{ "nmaster",          	INTEGER, 	&nmaster },
+		{ "resizehints",       	INTEGER, 	&resizehints },
+		{ "mfact",      	 	FLOAT,   	&mfact },
+		{ "swallowfloating",	INTEGER,	&swallowfloating },
 };
 
 static const Key keys[] = {
@@ -162,13 +174,13 @@ static const Key keys[] = {
 	/* { MODKEY,					XK_e,			NULL,				NULL }, */
 	/* { MODKEY|ShiftMask,			XK_e,			NULL,				NULL }, */
 	{ MODKEY,						XK_f,			togglefullscr,		{0} },
-	{ MODKEY|ShiftMask,				XK_f,			setlayout,			{.v = &layouts[1]} },
+	{ MODKEY|ShiftMask,				XK_f,			setlayout,			{.v = &layouts[1]} }, /* floating */
 	/* { MODKEY,					XK_g,			NULL,				NULL }, */
 	/* { MODKEY|ShiftMask,			XK_g,			NULL,				NULL }, */
 	{ MODKEY,                       XK_h,      		setmfact,       	{.f = -0.05} },
 	{ MODKEY|ShiftMask,				XK_h,			tagmon,				{.i = -1 } },
-	/* { MODKEY,					XK_i,			NULL,				NULL }, */
-	/* { MODKEY|ShiftMask,			XK_i,			NULL,				NULL }, */
+	{ MODKEY,						XK_i,			setlayout,			{.v= &layouts[6]} }, /* centeredmaster */
+	{ MODKEY|ShiftMask,				XK_i,			setlayout,			{.v= &layouts[7]} }, /* centeredfloatingmaster */
 	/* Mapped using stack keys */
 	/* { MODKEY,					XK_j,      		focusstack,     	{.i = +1 } }, */
 	/* { MODKEY|ShiftMask,			XK_j,			NULL,				NULL }, */
@@ -177,7 +189,7 @@ static const Key keys[] = {
 	/* { MODKEY|ShiftMask,			XK_k,			NULL,				NULL }, */
 	{ MODKEY,                       XK_l,      		setmfact,       	{.f = +0.05} },
 	{ MODKEY|ShiftMask,				XK_l,			tagmon,				{.i = +1 } },
-	{ MODKEY,                       XK_m,      		setlayout,      	{.v = &layouts[2]} },
+	{ MODKEY,                       XK_m,      		setlayout,      	{.v = &layouts[2]} }, /* monocle */
 	{ MODKEY|ShiftMask,				XK_m,			spawn,				SHCMD("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle; kill -44 $(pidof dwmblocks)") },
 	/* { MODKEY,					XK_n,			NULL,				NULL }, */
 	/* { MODKEY|ShiftMask,			XK_n,			NULL,				NULL }, */
@@ -195,7 +207,7 @@ static const Key keys[] = {
 	{ MODKEY|ShiftMask,				XK_r,			spawn,				{.v = (const char*[]){ TERMINAL, "-e", "htop", NULL } } },
 	{ MODKEY,                       XK_s,			togglesticky,		{0} },
 	/* { MODKEY|ShiftMask,			XK_s,			NULL,				NULL }, */
-	{ MODKEY,                       XK_t,      		setlayout,      	{.v = &layouts[0]} },
+	{ MODKEY,                       XK_t,      		setlayout,      	{.v = &layouts[0]} }, /* tile */
 	/* { MODKEY|ShiftMask,			XK_t,			NULL,				NULL }, */
 	{ MODKEY,						XK_u,			togglermaster,		{0} },
 	/* { MODKEY|ShiftMask,			XK_u,			NULL,				NULL }, */
