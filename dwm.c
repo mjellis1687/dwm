@@ -292,6 +292,7 @@ static void load_xresources(void);
 static void resource_load(XrmDatabase db, char *name, enum resource_type rtype, void *dst);
 static void centeredmaster(Monitor *m);
 static void centeredfloatingmaster(Monitor *m);
+static unsigned int lastbuttonstate = 0;
 
 static pid_t getparentprocess(pid_t p);
 static int isdescprocess(pid_t p, pid_t c);
@@ -578,6 +579,7 @@ buttonpress(XEvent *e)
 		else if (ev->x > selmon->ww - statusw && selmon->showstatus) {
 			x = selmon->ww - statusw;
 			click = ClkStatusText;
+			lastbuttonstate = ev->state;
 			statussig = 0; /* statuscmd stuff */
 			for (text = s = stext; *s && x <= ev->x; s++) {// Loop through to determine which block was clicked
 				if ((unsigned char)(*s) < ' ') {// sig delim, if block boundaries are off check this
@@ -2013,7 +2015,9 @@ sigstatusbar(const Arg *arg)
 
 	if (!statussig)
 		return;
-	sv.sival_int = arg->i;
+	// sv.sival_int = arg->i;
+	// Pack button in low byte, modifier flags in next byte
+    sv.sival_int = arg->i | ((lastbuttonstate & ShiftMask) ? (1 << 8) : 0);
 	if ((statuspid = getstatusbarpid()) <= 0)
 		return;
 
