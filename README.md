@@ -32,6 +32,14 @@ dwm is an extremely fast, small, and dynamic window manager for X.
 - [rmaster](https://dwm.suckless.org/patches/rmaster/) via [patch](https://dwm.suckless.org/patches/rmaster/dwm-rmaster-6.2.diff): Enables swapping the master- and stack area such that the master-client appears on the right and the stack-clients appear on the left.
 - [centeredmaster](https://dwm.suckless.org/patches/centeredmaster/) via [patch](https://dwm.suckless.org/patches/centeredmaster/dwm-centeredmaster-6.1.diff): Two centered-based layouts
 
-## TODO
+### Additional Features
 
-- Fix reloading dwm (clients get set to the correct monitor, but not the correct tag)
+#### Session Persistence
+
+Added support for saving and restoring client state across restarts. When dwm is restarted, all open windows are returned to their previous monitor and tag assignments automatically.
+
+To use this feature, dwm must be restarted in a way that triggers `saveSession()` before exiting and `restoreSession()` after startup (done automatically via `main()`. The session state is written to SESSION_FILE on exit and read back on the next startup. The file is deleted after a successful restore, so it does not persist across full logouts or reboots — only across in-place restarts.
+
+#### Status Bar Click Mask
+
+Added modifiers to `sigstatusbar`, which can be used by `dwmblocks` to set `$BLOCK_MODIFIERS`. This is used to combine a mouse button click while holding down the Shift key.

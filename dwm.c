@@ -1535,11 +1535,12 @@ restoreSession(void)
 
         // 3. Apply the saved state
         if (found_c) {
-			found_c->tags = tags; // Ensure tags are within valid range
             if (found_c->mon != m) {
                 sendmon(found_c, m);
             }
-            // Add this to ensure the window's state is updated in the stack
+			found_c->tags = tags; // Ensure tags are within valid range
+			if (!found_c->tags) found_c->tags = m->tagset[m->seltags];  // Fallback if tags somehow zero
+            // Ensure the window's state is updated in the stack
             setclientstate(found_c, NormalState);
         }
     }
@@ -1551,7 +1552,7 @@ restoreSession(void)
     }
 
     fclose(fr);
-    // Optional: Delete the file so it doesn't persist across fresh logins
+    // Delete the file so it doesn't persist across fresh logins
     remove(SESSION_FILE);
 }
 
