@@ -179,8 +179,8 @@ static const Key keys[] = {
 	/* { MODKEY|ShiftMask,			XK_g,			NULL,				NULL }, */
 	{ MODKEY,                       XK_h,      		setmfact,       	{.f = -0.05} },
 	{ MODKEY|ShiftMask,				XK_h,			tagmon,				{.i = -1 } },
-	{ MODKEY,						XK_i,			setlayout,			{.v= &layouts[6]} }, /* centeredmaster */
-	{ MODKEY|ShiftMask,				XK_i,			setlayout,			{.v= &layouts[7]} }, /* centeredfloatingmaster */
+	{ MODKEY,						XK_i,			setlayout,			{.v= &layouts[3]} }, /* centeredmaster */
+	{ MODKEY|ShiftMask,				XK_i,			setlayout,			{.v= &layouts[4]} }, /* centeredfloatingmaster */
 	/* Mapped using stack keys */
 	/* { MODKEY,					XK_j,      		focusstack,     	{.i = +1 } }, */
 	/* { MODKEY|ShiftMask,			XK_j,			NULL,				NULL }, */
