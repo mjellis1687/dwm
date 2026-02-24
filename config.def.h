@@ -161,7 +161,7 @@ static const Key keys[] = {
 	{ MODKEY|ShiftMask,				XK_minus,		spawn,				SHCMD("wpctl set-volume @DEFAULT_AUDIO_SINK@ 15%-; kill -44 $(pidof dwmblocks)") },
 	{ MODKEY,						XK_equal,		spawn,				SHCMD("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+; kill -44 $(pidof dwmblocks)") },
 	{ MODKEY|ShiftMask,				XK_equal,		spawn,				SHCMD("wpctl set-volume @DEFAULT_AUDIO_SINK@ 15%+; kill -44 $(pidof dwmblocks)") },
-	/* { MODKEY,					XK_BackSpace,	NULL,				NULL }, */
+	{ MODKEY,						XK_BackSpace,	spawn,				{.v = (const char*[]){ "sysact", NULL } } },
 	/* { MODKEY|ShiftMask,			XK_BackSpace,	NULL,				NULL }, */
 	{ MODKEY,					    XK_a,      		togglebartitle, 	{0} },
 	{ MODKEY|ShiftMask,             XK_a,      		togglebartags,  	{0} },
@@ -189,15 +189,15 @@ static const Key keys[] = {
 	/* { MODKEY|ShiftMask,			XK_k,			NULL,				NULL }, */
 	{ MODKEY,                       XK_l,      		setmfact,       	{.f = +0.05} },
 	{ MODKEY|ShiftMask,				XK_l,			tagmon,				{.i = +1 } },
-	{ MODKEY,                       XK_m,      		setlayout,      	{.v = &layouts[2]} }, /* monocle */
+	{ MODKEY,						XK_m,			spawn,				{.v = (const char*[]){ TERMINAL, "-e", "ncmpcpp", NULL } } },
 	{ MODKEY|ShiftMask,				XK_m,			spawn,				SHCMD("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle; kill -44 $(pidof dwmblocks)") },
 	/* { MODKEY,					XK_n,			NULL,				NULL }, */
 	/* { MODKEY|ShiftMask,			XK_n,			NULL,				NULL }, */
 	{ MODKEY,						XK_o,			incnmaster,			{.i = +1 } },
 	{ MODKEY|ShiftMask,				XK_o,			incnmaster, 		{.i = -1 } },
+	{ MODKEY,						XK_p,			spawn,				{.v = (const char*[]){ "mpc", "toggle", NULL } } },
+	{ MODKEY|ShiftMask,				XK_p,			spawn,				SHCMD("mpc pause; pauseallmpv") },
 	/* { MODKEY,                    XK_p,      		spawn,          	{.v = dmenucmd } }, */
-	/* { MODKEY,					XK_p,			NULL,				NULL }, */
-	/* { MODKEY|ShiftMask,			XK_p,			NULL,				NULL }, */
 	{ MODKEY,						XK_q,			killclient,			{0} },
 	/* { MODKEY|ShiftMask,          XK_q,      		quit,           	{0} }, */
 	/* { MODKEY|ShiftMask,			XK_q,			spawn,				{.v = (const char*[]){ "sysact", NULL } } }, */
@@ -210,7 +210,7 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_t,      		setlayout,      	{.v = &layouts[0]} }, /* tile */
 	/* { MODKEY|ShiftMask,			XK_t,			NULL,				NULL }, */
 	{ MODKEY,						XK_u,			togglermaster,		{0} },
-	/* { MODKEY|ShiftMask,			XK_u,			NULL,				NULL }, */
+	{ MODKEY|ShiftMask,				XK_u,			setlayout,			{.v = &layouts[2]} }, /* monocle */
 	/* Mapped using stack keys */
 	/* { MODKEY,					XK_v,			NULL,				NULL }, */
 	/* { MODKEY|ShiftMask,			XK_v,			NULL,				NULL }, */
@@ -224,10 +224,10 @@ static const Key keys[] = {
 	/* { MODKEY|ShiftMask,			XK_z,			NULL,				NULL }, */
 	/* Other keys on main keyboard */
 	{ MODKEY,                       XK_Tab,    		view,           	{0} },
-	/* { MODKEY,					XK_bracketleft,	spawn,				{.v = (const char*[]){ "mpc", "seek", "-10", NULL } } }, */
-	/* { MODKEY|ShiftMask,			XK_bracketleft,	spawn,				{.v = (const char*[]){ "mpc", "seek", "-60", NULL } } }, */
-	/* { MODKEY,					XK_bracketright,spawn,				{.v = (const char*[]){ "mpc", "seek", "+10", NULL } } }, */
-	/* { MODKEY|ShiftMask,			XK_bracketright,spawn,				{.v = (const char*[]){ "mpc", "seek", "+60", NULL } } }, */
+	{ MODKEY,						XK_bracketleft,	spawn,				{.v = (const char*[]){ "mpc", "seek", "-10", NULL } } },
+	{ MODKEY|ShiftMask,				XK_bracketleft,	spawn,				{.v = (const char*[]){ "mpc", "seek", "-60", NULL } } },
+	{ MODKEY,						XK_bracketright,spawn,				{.v = (const char*[]){ "mpc", "seek", "+10", NULL } } },
+	{ MODKEY|ShiftMask,				XK_bracketright,spawn,				{.v = (const char*[]){ "mpc", "seek", "+60", NULL } } },
 	{ MODKEY,						XK_backslash,	view,				{0} },
 	/* { MODKEY,					XK_semicolon,	NULL,				NULL }, */
 	/* { MODKEY|ShiftMask,			XK_semicolon,	NULL,				NULL }, */
